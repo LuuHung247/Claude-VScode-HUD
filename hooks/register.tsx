@@ -28,8 +28,8 @@ const isStatusOpen = atom({ plugin: 'vscode-hud', key: 'isStatusOpen' } as const
 // Label column of the Status lines, in cells: a real column, so the values line
 // up whatever font the host draws with.
 const LABEL_COLUMNS = 10
-// Below this width the two columns stack into one.
-const WIDE_COLUMNS = 70
+// Each column needs this much room, in cells, or the two stack into one.
+const COLUMN_MIN_COLUMNS = 34
 
 const patchHud = ($: EngineInterface, patch: Partial<Hud>) =>
   update($, hud, current => ({ ...current, ...patch }))
@@ -144,7 +144,6 @@ export const register: Register = (on, options) => {
     const { Box, Text, Button } = $.ui.resolve(e)
 
     const status = buildStatus(info, list, now, isPaceOn)
-    const isWide = e.props.bodyColumns >= WIDE_COLUMNS
     const field = ([label, value]: Row) => (
       <Box flexDirection="row">
         <Box width={LABEL_COLUMNS}>
@@ -184,26 +183,28 @@ export const register: Register = (on, options) => {
         </Box>
         {open && (
           <Box flexDirection="column" marginTop={1}>
-            <Box flexDirection={isWide ? 'row' : 'column'}>
-              <Box flexDirection="column" flexGrow={1}>
+            <Box flexDirection="row" flexWrap="wrap">
+              <Box flexDirection="column" flexGrow={1} minWidth={COLUMN_MIN_COLUMNS}>
                 {status.left.map(field)}
               </Box>
-              <Box flexDirection="column" flexGrow={1}>
+              <Box flexDirection="column" flexGrow={1} minWidth={COLUMN_MIN_COLUMNS}>
                 {status.right.map(field)}
               </Box>
             </Box>
             {status.pace.length > 0 && (
-              <Box flexDirection="row" gap={3} marginTop={1}>
+              <Box flexDirection="row" marginTop={1}>
                 <Box width={LABEL_COLUMNS}>
                   <Text dimColor>Pace</Text>
                 </Box>
-                {status.pace.map(item => (
-                  <Text>
-                    <Text bold>{item.label}</Text>
-                    {' '}
-                    <Text color={paceColor(item.level)}>{item.text}</Text>
-                  </Text>
-                ))}
+                <Box flexDirection="row" gap={3}>
+                  {status.pace.map(item => (
+                    <Text>
+                      <Text bold>{item.label}</Text>
+                      {' '}
+                      <Text color={paceColor(item.level)}>{item.text}</Text>
+                    </Text>
+                  ))}
+                </Box>
               </Box>
             )}
           </Box>
