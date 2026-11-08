@@ -7,6 +7,10 @@ your subscription usage you have used, for example:
 5h 17% 3:20 AM  Weekly 54% Nov 11
 ```
 
+![The band above the prompt](docs/band.svg)
+
+The image is an illustration of the layout, not a screenshot.
+
 Each window shows the percentage used and when it resets: a clock time if
 the reset is within 24 hours, otherwise a date. The percentage is green below
 50%, yellow from 50% to 80%, and red from 80%. The band stays hidden until

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="150" viewBox="0 0 760 150" role="img" aria-label="The usage-band line above the Claude Code prompt in VS Code: 5h 17% 3:20 AM, Weekly 54% Nov 11">
+  <rect width="760" height="150" fill="#262626"/>
+  <rect x="20" y="14" width="720" height="46" rx="8" fill="none" stroke="#484848"/>
+  <text x="32" y="32" fill="#8c8c8c" font-family="system-ui, sans-serif" font-size="12">From the usage-band plugin</text>
+  <g font-family="system-ui, sans-serif" font-size="15">
+    <text x="32" y="51" fill="#e6e6e6" font-weight="700">5h</text>
+    <text x="55" y="51" fill="#6fbf73">17%</text>
+    <text x="88" y="51" fill="#8c8c8c">3:20 AM</text>
+    <text x="165" y="51" fill="#e6e6e6" font-weight="700">Weekly</text>
+    <text x="218" y="51" fill="#6fbf73">54%</text>
+    <text x="252" y="51" fill="#8c8c8c">Nov 11</text>
+  </g>
+  <rect x="20" y="74" width="720" height="62" rx="10" fill="#3c3c3c" stroke="#5a5a5a"/>
+  <text x="38" y="102" fill="#8c8c8c" font-family="system-ui, sans-serif" font-size="14">Message Claude</text>
+</svg>
