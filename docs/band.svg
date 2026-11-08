@@ -9,8 +9,8 @@
     <text x="165" y="53" fill="#e6e6e6" font-weight="700">Weekly</text>
     <text x="218" y="53" fill="#6fbf73">54%</text>
     <text x="252" y="53" fill="#8c8c8c">Nov 11</text>
-    <rect x="312" y="37" width="44" height="22" rx="4" fill="#3c3c3c" stroke="#5a5a5a"/>
-    <text x="322" y="53" fill="#e6e6e6">HUD</text>
+    <rect x="672" y="37" width="56" height="22" rx="4" fill="#3c3c3c" stroke="#5a5a5a"/>
+    <text x="682" y="53" fill="#e6e6e6">Status</text>
     <g fill="#8c8c8c"><text x="32" y="78">Model</text><text x="32" y="96">Project</text><text x="32" y="114">Branch</text><text x="32" y="132">Context</text><text x="32" y="150">Cost</text></g>
     <g fill="#e6e6e6"><text x="122" y="78">claude-sonnet-5-5</text><text x="122" y="96">demo-app</text><text x="122" y="114">main +2</text><text x="122" y="132">42% (84k/200k)</text><text x="122" y="150">$1.23</text></g>
     <text x="360" y="78" fill="#8c8c8c">Last turn</text><text x="450" y="78" fill="#e6e6e6">42s, 7 tool calls</text>

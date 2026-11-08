@@ -57,8 +57,9 @@ export const formatReset = (iso: string | undefined, now: number): string => {
   return d.getTime() - now < DAY_MS ? formatClock(d) : `${MONTHS[d.getMonth()]} ${d.getDate()}`
 }
 
-export const colorFor = (percent: number): 'green' | 'yellow' | 'red' =>
-  percent < WARN_PERCENT ? 'green' : percent < ALERT_PERCENT ? 'yellow' : 'red'
+// Theme keys, not raw colors: the host paints them from the person's own theme.
+export const colorFor = (percent: number): 'success' | 'warning' | 'error' =>
+  percent < WARN_PERCENT ? 'success' : percent < ALERT_PERCENT ? 'warning' : 'error'
 
 export const formatTokens = (n: number): string =>
   n >= THOUSAND ? `${Math.round(n / THOUSAND)}k` : `${n}`
@@ -68,3 +69,12 @@ export const formatSeconds = (s: number): string =>
 
 export const baseName = (path: string): string =>
   path.split('/').filter(Boolean).pop() ?? path
+
+const MAX_TEXT = 60
+
+// Branch names and todo text come from the repo and the model: drop control
+// characters and cap the length before drawing them.
+export const clean = (text: string): string => {
+  const flat = [...text].filter(c => c >= ' ' && c !== '\u007f').join('').trim()
+  return flat.length > MAX_TEXT ? `${flat.slice(0, MAX_TEXT - 1)}...` : flat
+}

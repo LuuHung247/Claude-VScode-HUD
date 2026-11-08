@@ -21,7 +21,7 @@ declare module 'claude-code' {
     'vscode-hud': {
       windows: Shaped<UsageWindow[]>
       hud: Shaped<Hud>
-      isHudOpen: boolean
+      isStatusOpen: boolean
     }
   }
 }

@@ -1,14 +1,14 @@
 # Claude-VScode HUD
 
 A Claude Code mod (plugin name `vscode-hud`) that draws a one-line band above
-the prompt with your subscription usage, plus a HUD button that opens the rest
-of what you want to see while an agent works.
+the prompt with your subscription usage, plus a Status button on the right that opens
+the rest of what you want to see while an agent works.
 
 ```
-5h 17% 3:20 AM  Weekly 54% Nov 11  [HUD]
+5h 17% 3:20 AM  Weekly 54% Nov 11                    [Status]
 ```
 
-![The HUD band above the prompt](docs/band.svg)
+![The band above the prompt](docs/band.svg)
 
 The image is an illustration of the layout, not a screenshot. The numbers in it
 are made up.
@@ -21,9 +21,9 @@ yellow from 50% to 80%, and red from 80%. The row stays empty until Claude Code
 reports rate-limit data, which only happens on a subscription plan after the
 first reply.
 
-## The HUD button
+## The Status button
 
-Press `HUD` (or `h` while the band has focus) to open or close these lines.
+Press `Status` (or `s` while the band has focus) to open or close these lines.
 Lines with no data yet are left out.
 
 | Line | What it shows |
@@ -41,6 +41,12 @@ The git lines run read-only `git branch --show-current` and `git status
 
 The band is drawn on the terminal, desktop and VS Code surfaces. In VS Code the
 host adds its own "From the vscode-hud plugin" label and frame around it.
+
+## Theme
+
+Colors are theme roles (success, warning, error and the dim text style), not fixed
+hex values, so the host paints them from your own VS Code theme. The band adds
+no background of its own. Switching the theme restyles it with no setting.
 
 ## Install
 

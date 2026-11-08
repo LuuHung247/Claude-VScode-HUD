@@ -7,6 +7,7 @@ import {
   EMPTY_HUD,
   LABELS,
   baseName,
+  clean,
   colorFor,
   formatReset,
   formatSeconds,
@@ -21,7 +22,7 @@ const windows = atom({ plugin: 'vscode-hud', key: 'windows' } as const, [], {
 const hud = atom({ plugin: 'vscode-hud', key: 'hud' } as const, EMPTY_HUD, {
   shape: 'hud-1',
 })
-const isHudOpen = atom({ plugin: 'vscode-hud', key: 'isHudOpen' } as const, false)
+const isStatusOpen = atom({ plugin: 'vscode-hud', key: 'isStatusOpen' } as const, false)
 
 const patchHud = ($: EngineInterface, patch: Partial<Hud>) =>
   update($, hud, current => ({ ...current, ...patch }))
@@ -34,7 +35,7 @@ const refreshStatic = async ($: EngineInterface, cwd: string) => {
   } catch {
     model = ''
   }
-  await patchHud($, { ...git, model, project: baseName(cwd) })
+  await patchHud($, { ...git, branch: clean(git.branch), model: clean(model), project: clean(baseName(cwd)) })
 }
 
 export const register: Register = on => {
@@ -95,7 +96,7 @@ export const register: Register = on => {
     await patchHud($, {
       todoTotal: todos.length,
       todoDone: todos.filter(t => t.status === 'completed').length,
-      todoCurrent: current?.activeForm ?? '',
+      todoCurrent: clean(current?.activeForm ?? ''),
     })
     return next(e)
   })
@@ -112,7 +113,7 @@ export const register: Register = on => {
 
     const list = await read($, windows)
     const info = await read($, hud)
-    const open = await read($, isHudOpen)
+    const open = await read($, isStatusOpen)
     const now = await $.clock.now()
     const { Box, Text, Button } = $.ui.resolve(e)
 
@@ -143,21 +144,23 @@ export const register: Register = on => {
 
     return (
       <Box flexDirection="column">
-        <Box flexDirection="row" gap={2}>
-          {list.map(w => {
-            const percent = used(w.percentUsed)
-            const reset = formatReset(w.resetsAt, now)
-            return (
-              <Text>
-                <Text bold>{LABELS[w.kind] ?? w.kind}</Text>
-                {' '}
-                <Text color={colorFor(percent)}>{`${percent}%`}</Text>
-                {reset && <Text dimColor>{` ${reset}`}</Text>}
-              </Text>
-            )
-          })}
-          <Button key="hud" hotkey="h" plain onPress={() => update($, isHudOpen, v => !v)}>
-            HUD
+        <Box flexDirection="row">
+          <Box flexDirection="row" gap={2} flexGrow={1}>
+            {list.map(w => {
+              const percent = used(w.percentUsed)
+              const reset = formatReset(w.resetsAt, now)
+              return (
+                <Text>
+                  <Text bold>{LABELS[w.kind] ?? w.kind}</Text>
+                  {' '}
+                  <Text color={colorFor(percent)}>{`${percent}%`}</Text>
+                  {reset && <Text dimColor>{` ${reset}`}</Text>}
+                </Text>
+              )
+            })}
+          </Box>
+          <Button key="status" hotkey="s" plain onPress={() => update($, isStatusOpen, v => !v)}>
+            Status
           </Button>
         </Box>
         {open &&

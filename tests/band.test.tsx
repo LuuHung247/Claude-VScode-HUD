@@ -53,12 +53,12 @@ for (const surface of ['terminal', 'vscode'] as const) {
     await ui.unmount()
   })
 
-  test(`the HUD button shows the details on ${surface}`, async ($, on) => {
+  test(`the Status button shows the details on ${surface}`, async ($, on) => {
     seed(on)
     await $.session.start({ cwd: '/work/demo', surface, isInteractive: true })
 
     const ui = await $.ui.mount({ ...BAND, surface })
-    await ui.press({ key: 'hud' })
+    await ui.press({ key: 'status' })
 
     expect((await ui.find({ type: 'Text', text: /Model/ }))?.text).toContain('claude-sonnet-5-5')
     expect((await ui.find({ type: 'Text', text: /Branch/ }))?.text).toContain('main +2')
@@ -66,7 +66,7 @@ for (const surface of ['terminal', 'vscode'] as const) {
     expect((await ui.find({ type: 'Text', text: /Cost/ }))?.text).toContain('$1.23')
     expect((await ui.find({ type: 'Text', text: /Project/ }))?.text).toContain('demo')
 
-    await ui.press({ key: 'hud' })
+    await ui.press({ key: 'status' })
     expect(await ui.find({ type: 'Text', text: /Context/ })).toBeUndefined()
     await ui.unmount()
   })
