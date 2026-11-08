@@ -3,6 +3,7 @@ import type { EngineInterface, Register } from 'claude-code'
 
 import type { Hud } from '../types'
 import { readGit } from './git'
+import { formatSpan, paceOf } from './pace'
 import {
   EMPTY_HUD,
   LABELS,
@@ -38,7 +39,9 @@ const refreshStatic = async ($: EngineInterface, cwd: string) => {
   await patchHud($, { ...git, branch: clean(git.branch), model: clean(model), project: clean(baseName(cwd)) })
 }
 
-export const register: Register = on => {
+export const register: Register = (on, options) => {
+  const isPaceOn = options.paceWarning !== false
+  const warned = new Set<string>()
   let cwd = ''
   let turnStartedAt = 0
   let tools = 0
@@ -65,6 +68,19 @@ export const register: Register = on => {
   on('session.measure', async ($, e, next) => {
     if (e.changed.includes('rateLimits')) {
       await update($, windows, () => toWindows(e.rateLimits))
+      if (isPaceOn) {
+        const now = await $.clock.now()
+        for (const w of e.rateLimits) {
+          const pace = paceOf(w, now)
+          const id = `${w.kind}@${w.resetsAt}`
+          if (pace?.level === 'critical' && pace.hitsLimitInMs !== null && !warned.has(id)) {
+            warned.add(id)
+            $.ui.toast(
+              `${LABELS[w.kind] ?? w.kind} usage: at this pace the limit is reached in ${formatSpan(pace.hitsLimitInMs)}, before it resets`,
+            )
+          }
+        }
+      }
     }
     if (e.changed.includes('context') || e.changed.includes('cost')) {
       await patchHud($, {
@@ -102,9 +118,13 @@ export const register: Register = on => {
   })
 
   on('turn.complete', async ($, e, next) => {
-    const seconds = Math.round(((await $.clock.now()) - turnStartedAt) / 1000)
-    await patchHud($, { turnSeconds: seconds, tools })
-    await refreshStatic($, cwd)
+    try {
+      const seconds = Math.round(((await $.clock.now()) - turnStartedAt) / 1000)
+      await patchHud($, { turnSeconds: seconds, tools })
+      await refreshStatic($, cwd)
+    } catch (err) {
+      $.ui.log(`vscode-hud: could not refresh status: ${String(err)}`)
+    }
     return next(e)
   })
 
@@ -132,7 +152,21 @@ export const register: Register = on => {
     const todo = info.todoTotal > 0
       ? `${info.todoDone}/${info.todoTotal}${info.todoCurrent ? ` ${info.todoCurrent}` : ''}`
       : ''
+    const paceRows: Array<readonly [string, string]> = isPaceOn
+      ? list.flatMap(w => {
+          const pace = paceOf(w, now)
+          if (pace === null) return []
+          const text =
+            pace.level === 'critical' && pace.hitsLimitInMs !== null
+              ? `limit in ${formatSpan(pace.hitsLimitInMs)}, resets in ${formatSpan(pace.resetsInMs)}`
+              : pace.level === 'fast'
+                ? 'ahead of the clock, but should last until the reset'
+                : 'on track'
+          return [[`${LABELS[w.kind] ?? w.kind} pace`, text] as const]
+        })
+      : []
     const rows: ReadonlyArray<readonly [string, string]> = [
+      ...paceRows,
       ['Model', info.model],
       ['Project', info.project],
       ['Branch', git],
@@ -149,12 +183,17 @@ export const register: Register = on => {
             {list.map(w => {
               const percent = used(w.percentUsed)
               const reset = formatReset(w.resetsAt, now)
+              const pace = isPaceOn ? paceOf(w, now) : null
               return (
                 <Text>
                   <Text bold>{LABELS[w.kind] ?? w.kind}</Text>
                   {' '}
                   <Text color={colorFor(percent)}>{`${percent}%`}</Text>
                   {reset && <Text dimColor>{` ${reset}`}</Text>}
+                  {pace?.level === 'critical' && pace.hitsLimitInMs !== null && (
+                    <Text color="error">{` runs out in ${formatSpan(pace.hitsLimitInMs)}`}</Text>
+                  )}
+                  {pace?.level === 'fast' && <Text color="warning">{' fast'}</Text>}
                 </Text>
               )
             })}
@@ -168,7 +207,7 @@ export const register: Register = on => {
             .filter(([, value]) => value !== '')
             .map(([label, value]) => (
               <Text>
-                <Text dimColor>{label.padEnd(10)}</Text>
+                <Text dimColor>{label.padEnd(12)}</Text>
                 {value}
               </Text>
             ))}

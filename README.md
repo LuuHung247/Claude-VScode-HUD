@@ -21,6 +21,17 @@ yellow from 50% to 80%, and red from 80%. The row stays empty until Claude Code
 reports rate-limit data, which only happens on a subscription plan after the
 first reply.
 
+## Pace warning
+
+Each window is compared with how much of it has passed. A window used faster
+than the clock gets a `fast` tag. When the current rate would fill the window
+before it resets, the row says `runs out in 1h 12m`, and a toast appears once
+per window reset. Very early in a window (under 5% elapsed) or at low use (under
+5%) nothing is judged, because the rate is too noisy. The `Status` lines add a
+`pace` line per window with the numbers.
+
+Turn it off with the `paceWarning` option in the plugin's config menu.
+
 ## The Status button
 
 Press `Status` (or `s` while the band has focus) to open or close these lines.
@@ -41,6 +52,13 @@ The git lines run read-only `git branch --show-current` and `git status
 
 The band is drawn on the terminal, desktop and VS Code surfaces. In VS Code the
 host adds its own "From the vscode-hud plugin" label and frame around it.
+
+## Privacy and safety
+
+The mod makes no network calls and writes no files. It runs only two read-only
+git commands in the session folder and reads the figures Claude Code already
+holds. Branch names, folder names and todo text are stripped of control
+characters and cut to 60 characters before they are drawn.
 
 ## Theme
 
