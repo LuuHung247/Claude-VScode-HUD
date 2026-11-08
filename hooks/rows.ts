@@ -4,7 +4,13 @@ import { formatSpan, paceOf } from './pace'
 
 export type Row = readonly [label: string, value: string]
 export type PaceItem = { label: string; text: string; level: 'ok' | 'fast' | 'critical' }
-export type StatusModel = { left: Row[]; right: Row[]; pace: PaceItem[] }
+export type StatusModel = {
+  left: Row[]
+  right: Row[]
+  pace: PaceItem[]
+  // The Pace row appears only when a window needs attention.
+  hasPaceWarning: boolean
+}
 
 const hasValue = ([, value]: Row): boolean => value !== ''
 
@@ -62,5 +68,10 @@ export const buildStatus = (
           : [{ label: LABELS[w.kind] ?? w.kind, text: paceText(item), level: item.level }]
       })
     : []
-  return { left: left.filter(hasValue), right: right.filter(hasValue), pace }
+  return {
+    left: left.filter(hasValue),
+    right: right.filter(hasValue),
+    pace,
+    hasPaceWarning: pace.some(item => item.level !== 'ok'),
+  }
 }

@@ -28,8 +28,6 @@ const isStatusOpen = atom({ plugin: 'vscode-hud', key: 'isStatusOpen' } as const
 // Label column of the Status lines, in cells: a real column, so the values line
 // up whatever font the host draws with.
 const LABEL_COLUMNS = 10
-// Each column needs this much room, in cells, or the two stack into one.
-const COLUMN_MIN_COLUMNS = 34
 
 const patchHud = ($: EngineInterface, patch: Partial<Hud>) =>
   update($, hud, current => ({ ...current, ...patch }))
@@ -157,8 +155,8 @@ export const register: Register = (on, options) => {
 
     return (
       <Box flexDirection="column">
-        <Box flexDirection="row">
-          <Box flexDirection="row" gap={2} flexGrow={1}>
+        <Box flexDirection="row" gap={3}>
+          <Box flexDirection="row" gap={2}>
             {list.map(w => {
               const percent = used(w.percentUsed)
               const reset = formatReset(w.resetsAt, now)
@@ -182,17 +180,17 @@ export const register: Register = (on, options) => {
           </Button>
         </Box>
         {open && (
-          <Box flexDirection="column" marginTop={1}>
-            <Box flexDirection="row" flexWrap="wrap">
-              <Box flexDirection="column" flexGrow={1} minWidth={COLUMN_MIN_COLUMNS}>
+          <Box flexDirection="column">
+            <Box flexDirection="row" flexWrap="wrap" columnGap={4}>
+              <Box flexDirection="column">
                 {status.left.map(field)}
               </Box>
-              <Box flexDirection="column" flexGrow={1} minWidth={COLUMN_MIN_COLUMNS}>
+              <Box flexDirection="column">
                 {status.right.map(field)}
               </Box>
             </Box>
-            {status.pace.length > 0 && (
-              <Box flexDirection="row" marginTop={1}>
+            {status.hasPaceWarning && (
+              <Box flexDirection="row">
                 <Box width={LABEL_COLUMNS}>
                   <Text dimColor>Pace</Text>
                 </Box>

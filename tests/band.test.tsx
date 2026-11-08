@@ -134,3 +134,14 @@ test('a million-token window reads as 1M', async ($, on) => {
   expect((await ui.find({ type: 'Text', text: /^32% \(316k\/1M\)$/ }))?.text).toBe('32% (316k/1M)')
   await ui.unmount()
 })
+
+test('the Pace row stays hidden while every window is on track', async ($, on) => {
+  seed(on, [{ kind: 'five_hour', percentUsed: 30, resetsAt: iso(2 * HOUR) }])
+  await $.session.start({ cwd: '/work/demo', surface: 'vscode', isInteractive: true })
+
+  const ui = await $.ui.mount({ ...BAND, surface: 'vscode' })
+  await ui.press({ key: 'status' })
+
+  expect(await ui.find({ type: 'Text', text: /^Pace$/ })).toBeUndefined()
+  await ui.unmount()
+})
