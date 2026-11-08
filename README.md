@@ -1,15 +1,15 @@
 # usage-band
 
 A Claude Code mod that draws a single line above the prompt showing how much of
-your subscription usage is left, for example:
+your subscription usage you have used, for example:
 
 ```
-5h 83% 3:20 AM  Weekly 46% Nov 11
+5h 17% 3:20 AM  Weekly 54% Nov 11
 ```
 
-Each window shows the percentage remaining and when it resets: a clock time if
-the reset is within 24 hours, otherwise a date. The percentage is green above
-50%, yellow from 20% to 50%, and red below 20%. The band stays hidden until
+Each window shows the percentage used and when it resets: a clock time if
+the reset is within 24 hours, otherwise a date. The percentage is green below
+50%, yellow from 50% to 80%, and red from 80%. The band stays hidden until
 Claude Code reports rate-limit data, which only happens on a subscription plan
 after the first reply.
 

@@ -37,9 +37,9 @@ for (const surface of ['terminal', 'vscode'] as const) {
     const ui = await $.ui.mount({ ...BAND, surface })
 
     expect((await ui.find({ type: 'Text', text: /^5h$/ }))?.text).toBe('5h')
-    expect((await ui.find({ type: 'Text', text: /^97%$/ }))?.text).toBe('97%')
+    expect((await ui.find({ type: 'Text', text: /^3%$/ }))?.text).toBe('3%')
     expect((await ui.find({ type: 'Text', text: /^Weekly$/ }))?.text).toBe('Weekly')
-    expect((await ui.find({ type: 'Text', text: /^100%$/ }))?.text).toBe('100%')
+    expect((await ui.find({ type: 'Text', text: /^0%$/ }))?.text).toBe('0%')
     await ui.unmount()
   })
 }

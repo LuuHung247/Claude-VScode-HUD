@@ -26,8 +26,8 @@ const rank = (kind: string): number => {
   return i === -1 ? ORDER.length : i
 }
 
-const remaining = (w: UsageWindow): number =>
-  Math.max(0, Math.round(100 - w.percentUsed))
+const used = (w: UsageWindow): number =>
+  Math.min(100, Math.max(0, Math.round(w.percentUsed)))
 
 const pad2 = (n: number): string => (n < 10 ? `0${n}` : `${n}`)
 
@@ -44,8 +44,8 @@ const formatReset = (iso: string | undefined, now: number): string => {
   return d.getTime() - now < DAY_MS ? formatClock(d) : `${MONTHS[d.getMonth()]} ${d.getDate()}`
 }
 
-const colorFor = (left: number): 'green' | 'yellow' | 'red' =>
-  left > 50 ? 'green' : left > 20 ? 'yellow' : 'red'
+const colorFor = (percent: number): 'green' | 'yellow' | 'red' =>
+  percent < 50 ? 'green' : percent < 80 ? 'yellow' : 'red'
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
@@ -78,13 +78,13 @@ export const register: Register = on => {
     return (
       <Box flexDirection="row" gap={2}>
         {list.map(w => {
-          const left = remaining(w)
+          const percent = used(w)
           const reset = formatReset(w.resetsAt, now)
           return (
             <Text>
               <Text bold>{LABELS[w.kind] ?? w.kind}</Text>
               {' '}
-              <Text color={colorFor(left)}>{`${left}%`}</Text>
+              <Text color={colorFor(percent)}>{`${percent}%`}</Text>
               {reset && <Text dimColor>{` ${reset}`}</Text>}
             </Text>
           )
