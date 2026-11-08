@@ -55,7 +55,7 @@ for (const surface of ['terminal', 'vscode'] as const) {
     expect((await ui.find({ type: 'Text', text: /^3%$/ }))?.text).toBe('3%')
     expect((await ui.find({ type: 'Text', text: /^Weekly$/ }))?.text).toBe('Weekly')
     expect((await ui.find({ type: 'Text', text: /^0%$/ }))?.text).toBe('0%')
-    expect(await ui.find({ type: 'Text', text: /Context/ })).toBeUndefined()
+    expect(await ui.find({ type: 'Text', text: /^Context$/ })).toBeUndefined()
     await ui.unmount()
   })
 
@@ -66,14 +66,15 @@ for (const surface of ['terminal', 'vscode'] as const) {
     const ui = await $.ui.mount({ ...BAND, surface })
     await ui.press({ key: 'status' })
 
-    expect((await ui.find({ type: 'Text', text: /Model/ }))?.text).toContain('claude-sonnet-5-5')
-    expect((await ui.find({ type: 'Text', text: /Branch/ }))?.text).toContain('main +2')
-    expect((await ui.find({ type: 'Text', text: /Context/ }))?.text).toContain('42% (84k/200k)')
-    expect((await ui.find({ type: 'Text', text: /Cost/ }))?.text).toContain('$1.23')
-    expect((await ui.find({ type: 'Text', text: /Project/ }))?.text).toContain('demo')
+    expect((await ui.find({ type: 'Text', text: /^Model$/ }))?.text).toBe('Model')
+    expect((await ui.find({ type: 'Text', text: /^claude-sonnet-5-5$/ }))?.text).toBe('claude-sonnet-5-5')
+    expect((await ui.find({ type: 'Text', text: /^main \+2$/ }))?.text).toBe('main +2')
+    expect((await ui.find({ type: 'Text', text: /^42% \(84k\/200k\)$/ }))?.text).toBe('42% (84k/200k)')
+    expect((await ui.find({ type: 'Text', text: /^\$1\.23$/ }))?.text).toBe('$1.23')
+    expect((await ui.find({ type: 'Text', text: /^demo$/ }))?.text).toBe('demo')
 
     await ui.press({ key: 'status' })
-    expect(await ui.find({ type: 'Text', text: /Context/ })).toBeUndefined()
+    expect(await ui.find({ type: 'Text', text: /^Context$/ })).toBeUndefined()
     await ui.unmount()
   })
 }
@@ -95,7 +96,8 @@ test('a window that will run out before its reset says so', async ($, on) => {
 
   expect((await ui.find({ type: 'Text', text: /runs out in 20m/ }))?.text).toContain('runs out in 20m')
   await ui.press({ key: 'status' })
-  expect((await ui.find({ type: 'Text', text: /5h pace/ }))?.text).toContain('limit in 20m, resets in 2h 0m')
+  expect((await ui.find({ type: 'Text', text: /^5h pace$/ }))?.text).toBe('5h pace')
+  expect((await ui.find({ type: 'Text', text: /^limit in 20m, resets in 2h 0m$/ }))?.text).toBe('limit in 20m, resets in 2h 0m')
   await ui.unmount()
 })
 

@@ -25,6 +25,10 @@ const hud = atom({ plugin: 'vscode-hud', key: 'hud' } as const, EMPTY_HUD, {
 })
 const isStatusOpen = atom({ plugin: 'vscode-hud', key: 'isStatusOpen' } as const, false)
 
+// Label column of the Status lines, in cells: a real column, so the values line
+// up whatever font the host draws with.
+const LABEL_COLUMNS = 14
+
 const patchHud = ($: EngineInterface, patch: Partial<Hud>) =>
   update($, hud, current => ({ ...current, ...patch }))
 
@@ -206,10 +210,12 @@ export const register: Register = (on, options) => {
           rows
             .filter(([, value]) => value !== '')
             .map(([label, value]) => (
-              <Text>
-                <Text dimColor>{label.padEnd(12)}</Text>
-                {value}
-              </Text>
+              <Box flexDirection="row">
+                <Box width={LABEL_COLUMNS}>
+                  <Text dimColor>{label}</Text>
+                </Box>
+                <Text>{value}</Text>
+              </Box>
             ))}
       </Box>
     )
