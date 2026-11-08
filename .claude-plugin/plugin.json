@@ -1,6 +1,6 @@
 {
   "name": "vscode-hud",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Usage band above the Claude Code prompt with a HUD button for model, git branch, context, cost, turn and todo info",
   "author": {
     "name": "LuuHung247"
@@ -23,5 +23,6 @@
       "description": "Mark a usage window when it is being used faster than the clock, and toast once when the limit would be reached before the reset.",
       "default": true
     }
-  }
+  },
+  "icon": "./.claude-plugin/icon.png"
 }

@@ -2,7 +2,6 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
 import type { Hud } from '../types'
-import { readGit } from './git'
 import { formatSpan, paceOf } from './pace'
 import { buildStatus } from './rows'
 import type { PaceItem, Row } from './rows'
@@ -29,10 +28,31 @@ const isStatusOpen = atom({ plugin: 'vscode-hud', key: 'isStatusOpen' } as const
 // up whatever font the host draws with.
 const LABEL_COLUMNS = 10
 
-const patchHud = ($: EngineInterface, patch: Partial<Hud>) =>
-  update($, hud, current => ({ ...current, ...patch }))
+// The helpers that take `$` are function declarations at the top of this file.
+type GitInfo = { branch: string; changes: number }
 
-const refreshStatic = async ($: EngineInterface, cwd: string) => {
+const NO_GIT: GitInfo = { branch: '', changes: 0 }
+
+// Runs two fixed, read-only git commands in the session folder. Any failure
+// (not a repository, git missing, a timeout) reads as "no git info".
+async function readGit($: EngineInterface, cwd: string): Promise<GitInfo> {
+  try {
+    const head = await $.process.run(['git', 'branch', '--show-current'], { cwd, timeoutMs: 3000 })
+    if (head.exitCode !== 0) return NO_GIT
+    const status = await $.process.run(['git', 'status', '--porcelain'], { cwd, timeoutMs: 3000 })
+    const changes =
+      status.exitCode === 0 ? status.stdout.split('\n').filter(Boolean).length : 0
+    return { branch: head.stdout.trim() || 'detached', changes }
+  } catch {
+    return NO_GIT
+  }
+}
+
+async function patchHud($: EngineInterface, patch: Partial<Hud>) {
+  return update($, hud, current => ({ ...current, ...patch }))
+}
+
+async function refreshStatic($: EngineInterface, cwd: string) {
   const git = await readGit($, cwd)
   let model = ''
   try {
@@ -40,7 +60,12 @@ const refreshStatic = async ($: EngineInterface, cwd: string) => {
   } catch {
     model = ''
   }
-  await patchHud($, { ...git, branch: clean(git.branch), model: clean(model), project: clean(baseName(cwd)) })
+  await patchHud($, {
+    branch: clean(git.branch),
+    changes: git.changes,
+    model: clean(model),
+    project: clean(baseName(cwd)),
+  })
 }
 
 export const register: Register = (on, options) => {

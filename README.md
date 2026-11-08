@@ -51,12 +51,39 @@ The git lines run read-only `git branch --show-current` and `git status
 The band is drawn on the terminal, desktop and VS Code surfaces. In VS Code the
 host adds its own "From the vscode-hud plugin" label and frame around it.
 
-## Privacy and safety
+## What it runs, sends and reads
 
-The mod makes no network calls and writes no files. It runs only two read-only
-git commands in the session folder and reads the figures Claude Code already
-holds. Branch names, folder names and todo text are stripped of control
-characters and cut to 60 characters before they are drawn.
+Nothing is sent anywhere. The mod makes no network calls, writes no files, and
+opens no connections. It does not read any credential, token or environment
+variable.
+
+It runs exactly two programs, both `git`, both read-only, in the session
+folder, with a 3 second limit each, after each turn and at session start:
+
+- `git branch --show-current`, to show the branch name.
+- `git status --porcelain`, to count changed files for the `main +2` style label.
+
+If `git` is missing or the folder is not a repository, those lines are left out.
+The commands are fixed text in the source, never built from user input.
+
+Everything else comes from what Claude Code already holds for the session: the
+rate-limit windows, context size, model id and cost (through
+`$.session.usage()` and `$.session.model()`). Branch names, folder names and
+todo text are stripped of control characters and cut to 60 characters before
+they are drawn.
+
+## What each hook does
+
+| Hook | What the mod does |
+| --- | --- |
+| `session.start` | Remembers the session folder, reads usage, model and git info once. |
+| `session.measure` | Updates the usage windows, context and cost when Claude Code reports a change. Raises the pace toast when a window would run out before its reset, at most once per window per reset. |
+| `prompt.submit` | Starts the turn timer and resets the tool-call count. |
+| `tool.call` | Counts tool calls. For `TodoWrite` calls, also reads the todo list to show progress. It never changes, blocks or delays a call. |
+| `turn.complete` | Stores the turn time and refreshes the git and model lines. |
+| `ui.render` (`AbovePrompt`) | Draws the band. Returns nothing when a survey is showing. |
+
+Every hook passes the event on unchanged.
 
 ## Theme
 
