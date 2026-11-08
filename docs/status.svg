@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="250" viewBox="0 0 760 250" role="img" aria-label="The HUD band above the Claude Code prompt in VS Code: usage row with a HUD button, expanded to show model, project, branch, context, cost, last turn and todos">
-  <rect width="760" height="250" fill="#262626"/>
-  <rect x="20" y="14" width="720" height="158" rx="8" fill="none" stroke="#484848"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="230" viewBox="0 0 760 230" role="img" aria-label="The Status lines under the usage row: model, project, branch and todos on the left, context, cost and last turn on the right, then the pace of each window">
+  <rect width="760" height="230" fill="#262626"/>
+  <rect x="20" y="14" width="720" height="190" rx="8" fill="none" stroke="#484848"/>
   <text x="32" y="32" fill="#8c8c8c" font-family="system-ui, sans-serif" font-size="12">From the vscode-hud plugin</text>
   <g font-family="system-ui, sans-serif" font-size="15">
     <text x="32" y="53" fill="#e6e6e6" font-weight="700">5h</text>
@@ -11,13 +11,16 @@
     <text x="252" y="53" fill="#8c8c8c">Nov 11</text>
     <rect x="672" y="37" width="56" height="22" rx="4" fill="#3c3c3c" stroke="#5a5a5a"/>
     <text x="682" y="53" fill="#e6e6e6">Status</text>
-    <g fill="#8c8c8c"><text x="32" y="78">Model</text><text x="32" y="96">Project</text><text x="32" y="114">Branch</text><text x="32" y="132">Context</text><text x="32" y="150">Cost</text></g>
-    <g fill="#e6e6e6"><text x="122" y="78">claude-sonnet-5-5</text><text x="122" y="96">demo-app</text><text x="122" y="114">main +2</text><text x="122" y="132">42% (84k/200k)</text><text x="122" y="150">$1.23</text></g>
-    <text x="360" y="78" fill="#8c8c8c">Last turn</text><text x="450" y="78" fill="#e6e6e6">42s, 7 tool calls</text>
-    <text x="360" y="96" fill="#8c8c8c">Todos</text><text x="450" y="96" fill="#e6e6e6">2/5 Fix the login form</text>
-    <text x="360" y="114" fill="#8c8c8c">5h pace</text><text x="450" y="114" fill="#e6e6e6">on track</text>
-    <text x="360" y="132" fill="#8c8c8c">Weekly pace</text><text x="450" y="132" fill="#e6e6e6">on track</text>
+    <g fill="#8c8c8c">
+      <text x="32" y="90">Model</text><text x="32" y="112">Project</text><text x="32" y="134">Branch</text><text x="32" y="156">Todos</text>
+      <text x="392" y="90">Context</text><text x="392" y="112">Cost</text><text x="392" y="134">Last turn</text>
+      <text x="32" y="188">Pace</text>
+    </g>
+    <g fill="#e6e6e6">
+      <text x="122" y="90">claude-sonnet-5-5</text><text x="122" y="112">demo-app</text><text x="122" y="134">main +2</text><text x="122" y="156">2/5 Fix the login form</text>
+      <text x="482" y="90">42% (84k/200k)</text><text x="482" y="112">$1.23</text><text x="482" y="134">42s, 7 tool calls</text>
+    </g>
+    <text x="122" y="188" fill="#e6e6e6" font-weight="700">5h</text><text x="146" y="188" fill="#e6e6e6">on track</text>
+    <text x="250" y="188" fill="#e6e6e6" font-weight="700">Weekly</text><text x="303" y="188" fill="#e6e6e6">on track</text>
   </g>
-  <rect x="20" y="184" width="720" height="50" rx="10" fill="#3c3c3c" stroke="#5a5a5a"/>
-  <text x="38" y="214" fill="#8c8c8c" font-family="system-ui, sans-serif" font-size="14">Message Claude</text>
 </svg>

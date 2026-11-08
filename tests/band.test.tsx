@@ -18,7 +18,11 @@ const BAND = {
 type TestBody = Extract<Parameters<typeof test>[1], (...args: never[]) => unknown>
 type On = Parameters<TestBody>[1]
 
-const seed = (on: On, rateLimits?: SessionRateLimit[]) => {
+const seed = (
+  on: On,
+  rateLimits?: SessionRateLimit[],
+  context = { window: 200000, tokens: 84000, percent: 42 },
+) => {
   on('session.start', (_, e) => ({ cwd: e.cwd }))
   on('clock.now', () => ({ value: Date.parse('2026-11-08T12:00:00Z') }))
   on('session.model', () => ({ value: 'claude-sonnet-5-5' }))
@@ -34,7 +38,7 @@ const seed = (on: On, rateLimits?: SessionRateLimit[]) => {
   on('session.usage', () => ({
     value: {
       startedAt: 0,
-      context: { window: 200000, tokens: 84000, percent: 42 },
+      context,
       cost: { usd: 1.234 },
       rateLimits: rateLimits ?? [
         { kind: 'seven_day', percentUsed: 0 },
@@ -96,7 +100,6 @@ test('a window that will run out before its reset says so', async ($, on) => {
 
   expect((await ui.find({ type: 'Text', text: /runs out in 20m/ }))?.text).toContain('runs out in 20m')
   await ui.press({ key: 'status' })
-  expect((await ui.find({ type: 'Text', text: /^5h pace$/ }))?.text).toBe('5h pace')
   expect((await ui.find({ type: 'Text', text: /^limit in 20m, resets in 2h 0m$/ }))?.text).toBe('limit in 20m, resets in 2h 0m')
   await ui.unmount()
 })
@@ -118,5 +121,16 @@ test('a window on a steady pace shows no warning', async ($, on) => {
   const ui = await $.ui.mount({ ...BAND, surface: 'vscode' })
 
   expect(await ui.find({ type: 'Text', text: /runs out|fast/ })).toBeUndefined()
+  await ui.unmount()
+})
+
+test('a million-token window reads as 1M', async ($, on) => {
+  seed(on, undefined, { window: 1000000, tokens: 316000, percent: 32 })
+  await $.session.start({ cwd: '/work/demo', surface: 'vscode', isInteractive: true })
+
+  const ui = await $.ui.mount({ ...BAND, surface: 'vscode' })
+  await ui.press({ key: 'status' })
+
+  expect((await ui.find({ type: 'Text', text: /^32% \(316k\/1M\)$/ }))?.text).toBe('32% (316k/1M)')
   await ui.unmount()
 })

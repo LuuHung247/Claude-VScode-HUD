@@ -61,8 +61,13 @@ export const formatReset = (iso: string | undefined, now: number): string => {
 export const colorFor = (percent: number): 'success' | 'warning' | 'error' =>
   percent < WARN_PERCENT ? 'success' : percent < ALERT_PERCENT ? 'warning' : 'error'
 
-export const formatTokens = (n: number): string =>
-  n >= THOUSAND ? `${Math.round(n / THOUSAND)}k` : `${n}`
+export const formatTokens = (n: number): string => {
+  if (n >= THOUSAND * THOUSAND) {
+    const millions = n / (THOUSAND * THOUSAND)
+    return `${Number.isInteger(millions) ? millions : millions.toFixed(1)}M`
+  }
+  return n >= THOUSAND ? `${Math.round(n / THOUSAND)}k` : `${n}`
+}
 
 export const formatSeconds = (s: number): string =>
   s >= 60 ? `${Math.floor(s / 60)}m ${s % 60}s` : `${s}s`

@@ -35,7 +35,8 @@ Turn it off with the `paceWarning` option in the plugin's config menu.
 ## The Status button
 
 Press `Status` (or `s` while the band has focus) to open or close these lines.
-Lines with no data yet are left out.
+Lines with no data yet are left out. In a wide panel the lines sit in two
+columns with a `Pace` row under them; in a narrow panel they stack in one column.
 
 | Line | What it shows |
 | --- | --- |

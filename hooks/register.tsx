@@ -4,6 +4,8 @@ import type { EngineInterface, Register } from 'claude-code'
 import type { Hud } from '../types'
 import { readGit } from './git'
 import { formatSpan, paceOf } from './pace'
+import { buildStatus } from './rows'
+import type { PaceItem, Row } from './rows'
 import {
   EMPTY_HUD,
   LABELS,
@@ -11,8 +13,6 @@ import {
   clean,
   colorFor,
   formatReset,
-  formatSeconds,
-  formatTokens,
   toWindows,
   used,
 } from './format'
@@ -27,7 +27,9 @@ const isStatusOpen = atom({ plugin: 'vscode-hud', key: 'isStatusOpen' } as const
 
 // Label column of the Status lines, in cells: a real column, so the values line
 // up whatever font the host draws with.
-const LABEL_COLUMNS = 14
+const LABEL_COLUMNS = 10
+// Below this width the two columns stack into one.
+const WIDE_COLUMNS = 70
 
 const patchHud = ($: EngineInterface, patch: Partial<Hud>) =>
   update($, hud, current => ({ ...current, ...patch }))
@@ -141,44 +143,18 @@ export const register: Register = (on, options) => {
     const now = await $.clock.now()
     const { Box, Text, Button } = $.ui.resolve(e)
 
-    const context =
-      info.contextPercent === null
-        ? null
-        : `${info.contextPercent}%` +
-          (info.contextTokens !== null && info.contextWindow !== null
-            ? ` (${formatTokens(info.contextTokens)}/${formatTokens(info.contextWindow)})`
-            : '')
-    const git = info.branch ? `${info.branch}${info.changes > 0 ? ` +${info.changes}` : ''}` : ''
-    const lastTurn =
-      info.turnSeconds === null
-        ? ''
-        : `${formatSeconds(info.turnSeconds)}, ${info.tools} tool calls`
-    const todo = info.todoTotal > 0
-      ? `${info.todoDone}/${info.todoTotal}${info.todoCurrent ? ` ${info.todoCurrent}` : ''}`
-      : ''
-    const paceRows: Array<readonly [string, string]> = isPaceOn
-      ? list.flatMap(w => {
-          const pace = paceOf(w, now)
-          if (pace === null) return []
-          const text =
-            pace.level === 'critical' && pace.hitsLimitInMs !== null
-              ? `limit in ${formatSpan(pace.hitsLimitInMs)}, resets in ${formatSpan(pace.resetsInMs)}`
-              : pace.level === 'fast'
-                ? 'ahead of the clock, but should last until the reset'
-                : 'on track'
-          return [[`${LABELS[w.kind] ?? w.kind} pace`, text] as const]
-        })
-      : []
-    const rows: ReadonlyArray<readonly [string, string]> = [
-      ...paceRows,
-      ['Model', info.model],
-      ['Project', info.project],
-      ['Branch', git],
-      ['Context', context ?? ''],
-      ['Cost', info.costUsd === null ? '' : `$${info.costUsd.toFixed(2)}`],
-      ['Last turn', lastTurn],
-      ['Todos', todo],
-    ]
+    const status = buildStatus(info, list, now, isPaceOn)
+    const isWide = e.props.bodyColumns >= WIDE_COLUMNS
+    const field = ([label, value]: Row) => (
+      <Box flexDirection="row">
+        <Box width={LABEL_COLUMNS}>
+          <Text dimColor>{label}</Text>
+        </Box>
+        <Text>{value}</Text>
+      </Box>
+    )
+    const paceColor = (level: PaceItem['level']) =>
+      level === 'critical' ? 'error' : level === 'fast' ? 'warning' : undefined
 
     return (
       <Box flexDirection="column">
@@ -206,17 +182,32 @@ export const register: Register = (on, options) => {
             Status
           </Button>
         </Box>
-        {open &&
-          rows
-            .filter(([, value]) => value !== '')
-            .map(([label, value]) => (
-              <Box flexDirection="row">
-                <Box width={LABEL_COLUMNS}>
-                  <Text dimColor>{label}</Text>
-                </Box>
-                <Text>{value}</Text>
+        {open && (
+          <Box flexDirection="column" marginTop={1}>
+            <Box flexDirection={isWide ? 'row' : 'column'}>
+              <Box flexDirection="column" flexGrow={1}>
+                {status.left.map(field)}
               </Box>
-            ))}
+              <Box flexDirection="column" flexGrow={1}>
+                {status.right.map(field)}
+              </Box>
+            </Box>
+            {status.pace.length > 0 && (
+              <Box flexDirection="row" gap={3} marginTop={1}>
+                <Box width={LABEL_COLUMNS}>
+                  <Text dimColor>Pace</Text>
+                </Box>
+                {status.pace.map(item => (
+                  <Text>
+                    <Text bold>{item.label}</Text>
+                    {' '}
+                    <Text color={paceColor(item.level)}>{item.text}</Text>
+                  </Text>
+                ))}
+              </Box>
+            )}
+          </Box>
+        )}
       </Box>
     )
   })
