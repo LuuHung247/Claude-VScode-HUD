@@ -72,6 +72,23 @@ rate-limit windows, context size, model id and cost (through
 todo text are stripped of control characters and cut to 60 characters before
 they are drawn.
 
+## Every engine call, and what it does
+
+The mod's code is in `hooks/register.tsx`, loaded through `hooks/hooks.json`
+(`modules`). It uses only these calls on Claude Code's `$` object. None of them
+sends data off your machine.
+
+| Call | What it does here |
+| --- | --- |
+| `$.session.usage()` | Reads the rate-limit windows, context size and cost Claude Code already holds for the session. |
+| `$.session.model()` | Reads the model id of the session. |
+| `$.process.run(...)` | Runs the two fixed `git` commands above and returns their text. It is the only program the mod starts. |
+| `$.clock.now()` | Reads the current time, for the turn timer and the reset countdowns. |
+| `$.state.get` / `$.state.set` (through `read` and `update`) | Keeps the band's own display values (usage windows, status figures, whether the arrow is open) in the current session. Nothing is stored on disk. |
+| `$.ui.resolve(e)` | Gets the drawing elements (`Box`, `Text`, `Button`) for the surface being drawn. |
+| `$.ui.toast(text)` | Shows one short message in Claude Code when a window would run out before its reset. |
+| `$.ui.log(text)` | Writes a line to Claude Code's own log when reading usage or git info fails. |
+
 ## What each hook does
 
 | Hook | What the mod does |
