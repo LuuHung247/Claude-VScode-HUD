@@ -1,14 +1,14 @@
 # Claude-VScode HUD
 
 A Claude Code mod (plugin name `vscode-hud`) that draws a one-line band above
-the prompt with your subscription usage, plus a Status button on the right that opens
-the rest of what you want to see while an agent works.
+the prompt with your subscription usage, plus an arrow that opens the rest of what you want
+to see while an agent works.
 
 ![The band above the prompt in VS Code](docs/band.png)
 
 The screenshot is the band running in the Claude Code extension for VS Code.
 
-The Status button opens these lines under the usage row (illustration with
+The arrow after the usage row opens these lines under it (illustration with
 made-up numbers, not a screenshot):
 
 ![The Status lines](docs/status.svg)
@@ -27,14 +27,15 @@ Each window is compared with how much of it has passed. A window used faster
 than the clock gets a `fast` tag. When the current rate would fill the window
 before it resets, the row says `runs out in 1h 12m`, and a toast appears once
 per window reset. Very early in a window (under 5% elapsed) or at low use (under
-5%) nothing is judged, because the rate is too noisy. The `Status` lines add a
+5%) nothing is judged, because the rate is too noisy. The opened lines add a
 `pace` line per window with the numbers.
 
 Turn it off with the `paceWarning` option in the plugin's config menu.
 
-## The Status button
+## The arrow
 
-Press `Status` (or `s` while the band has focus) to open or close these lines.
+Press the arrow (or `s` while the band has focus) to open or close these lines.
+It points right when closed and down when open.
 Lines with no data yet are left out. In a wide panel the lines sit in two
 columns, and a `Pace` row appears under them only when a window is ahead of the clock; when the panel is too narrow for two they stack in one column.
 

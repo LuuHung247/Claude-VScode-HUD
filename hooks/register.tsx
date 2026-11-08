@@ -176,7 +176,7 @@ export const register: Register = (on, options) => {
             })}
           </Box>
           <Button key="status" hotkey="s" plain onPress={() => update($, isStatusOpen, v => !v)}>
-            Status
+            {open ? '\u25BE' : '\u25B8'}
           </Button>
         </Box>
         {open && (

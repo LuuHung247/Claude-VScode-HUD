@@ -63,7 +63,7 @@ for (const surface of ['terminal', 'vscode'] as const) {
     await ui.unmount()
   })
 
-  test(`the Status button shows the details on ${surface}`, async ($, on) => {
+  test(`the arrow shows the details on ${surface}`, async ($, on) => {
     seed(on)
     await $.session.start({ cwd: '/work/demo', surface, isInteractive: true })
 
