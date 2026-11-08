@@ -1,5 +1,5 @@
 {
-  "name": "usage-band",
+  "name": "vscode-hud",
   "owner": { "name": "LuuHung247" },
-  "plugins": [{ "name": "usage-band", "source": "./" }]
+  "plugins": [{ "name": "vscode-hud", "source": "./" }]
 }

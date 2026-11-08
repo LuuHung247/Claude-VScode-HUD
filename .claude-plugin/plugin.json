@@ -1,7 +1,7 @@
 {
-  "name": "usage-band",
-  "version": "0.1.0",
-  "description": "A one-line band above the prompt showing 5h and weekly usage remaining",
+  "name": "vscode-hud",
+  "version": "0.2.0",
+  "description": "Usage band above the Claude Code prompt with a HUD button for model, git branch, context, cost, turn and todo info",
   "author": { "name": "LuuHung247" },
   "license": "MIT",
   "types": "./types/index.d.ts"
