@@ -4,14 +4,14 @@ A Claude Code mod (plugin name `vscode-hud`) that draws a one-line band above
 the prompt with your subscription usage, plus a Status button on the right that opens
 the rest of what you want to see while an agent works.
 
-```
-5h 17% 3:20 AM  Weekly 54% Nov 11                    [Status]
-```
+![The band above the prompt in VS Code](docs/band.png)
 
-![The band above the prompt](docs/band.svg)
+The screenshot is the band running in the Claude Code extension for VS Code.
 
-The image is an illustration of the layout, not a screenshot. The numbers in it
-are made up.
+The Status button opens these lines under the usage row (illustration with
+made-up numbers, not a screenshot):
+
+![The Status lines](docs/status.svg)
 
 ## The usage row
 

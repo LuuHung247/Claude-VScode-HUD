@@ -15,6 +15,8 @@
     <g fill="#e6e6e6"><text x="122" y="78">claude-sonnet-5-5</text><text x="122" y="96">demo-app</text><text x="122" y="114">main +2</text><text x="122" y="132">42% (84k/200k)</text><text x="122" y="150">$1.23</text></g>
     <text x="360" y="78" fill="#8c8c8c">Last turn</text><text x="450" y="78" fill="#e6e6e6">42s, 7 tool calls</text>
     <text x="360" y="96" fill="#8c8c8c">Todos</text><text x="450" y="96" fill="#e6e6e6">2/5 Fix the login form</text>
+    <text x="360" y="114" fill="#8c8c8c">5h pace</text><text x="450" y="114" fill="#e6e6e6">on track</text>
+    <text x="360" y="132" fill="#8c8c8c">Weekly pace</text><text x="450" y="132" fill="#e6e6e6">on track</text>
   </g>
   <rect x="20" y="184" width="720" height="50" rx="10" fill="#3c3c3c" stroke="#5a5a5a"/>
   <text x="38" y="214" fill="#8c8c8c" font-family="system-ui, sans-serif" font-size="14">Message Claude</text>
